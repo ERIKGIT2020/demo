@@ -1,0 +1,37 @@
+artifact_path: modelo
+flavors:
+  python_function:
+    env:
+      conda: conda.yaml
+      virtualenv: python_env.yaml
+    loader_module: mlflow.sklearn
+    model_path: model.pkl
+    predict_fn: predict
+    python_version: 3.11.9
+  sklearn:
+    code: null
+    pickled_model: model.pkl
+    serialization_format: cloudpickle
+    sklearn_version: 1.9.0
+is_signature_from_type_hint: false
+mlflow_version: 2.22.2
+model_size_bytes: 18275865
+model_uuid: 91278577cc154c1a953a62f0cd56a553
+prompts: null
+run_id: 95c3a988695a47d7a7863e021af5e87e
+saved_input_example_info:
+  artifact_path: input_example.json
+  pandas_orient: split
+  serving_input_path: serving_input_example.json
+  type: dataframe
+signature:
+  inputs: '[{"type": "long", "name": "Pregnancies", "required": true}, {"type": "long",
+    "name": "PlasmaGlucose", "required": true}, {"type": "long", "name": "DiastolicBloodPressure",
+    "required": true}, {"type": "long", "name": "TricepsThickness", "required": true},
+    {"type": "long", "name": "SerumInsulin", "required": true}, {"type": "double",
+    "name": "BMI", "required": true}, {"type": "double", "name": "DiabetesPedigree",
+    "required": true}, {"type": "long", "name": "Age", "required": true}]'
+  outputs: '[{"type": "long", "required": true}]'
+  params: null
+type_hint_from_example: false
+utc_time_created: '2026-07-17 04:29:46.570908'

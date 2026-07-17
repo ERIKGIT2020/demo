@@ -8,13 +8,15 @@ from sklearn.metrics import accuracy_score
 
 
 # ==========================================
-# Configuración de MLflow
+# Configuración MLflow
 # ==========================================
 
-# Usar SQLite como backend (compatible con GitHub Actions)
 mlflow.set_tracking_uri("sqlite:///mlflow.db")
 
-# Crear o seleccionar experimento
+# Registro de modelos
+mlflow.set_registry_uri("sqlite:///mlflow.db")
+
+# Crear experimento
 mlflow.set_experiment("Diabetes")
 
 
@@ -26,15 +28,19 @@ df = pd.read_csv("data/diabetes.csv")
 
 
 # ==========================================
-# Separar variables
+# Variables
 # ==========================================
 
-X = df.drop(["PatientID", "Diabetic"], axis=1)
+X = df.drop(
+    ["PatientID", "Diabetic"],
+    axis=1
+)
+
 y = df["Diabetic"]
 
 
 # ==========================================
-# División entrenamiento / prueba
+# Separar datos
 # ==========================================
 
 X_train, X_test, y_train, y_test = train_test_split(
@@ -46,12 +52,14 @@ X_train, X_test, y_train, y_test = train_test_split(
 
 
 # ==========================================
-# Entrenamiento con MLflow
+# Entrenamiento MLflow
 # ==========================================
 
 with mlflow.start_run():
 
+
     # Crear modelo
+
     model = RandomForestClassifier(
         n_estimators=200,
         random_state=42
@@ -59,6 +67,7 @@ with mlflow.start_run():
 
 
     # Entrenar
+
     model.fit(
         X_train,
         y_train
@@ -66,10 +75,14 @@ with mlflow.start_run():
 
 
     # Predicción
-    y_pred = model.predict(X_test)
+
+    y_pred = model.predict(
+        X_test
+    )
 
 
-    # Evaluación
+    # Accuracy
+
     accuracy = accuracy_score(
         y_test,
         y_pred
@@ -93,7 +106,7 @@ with mlflow.start_run():
 
     mlflow.log_param(
         "n_estimators",
-        100
+        200
     )
 
     mlflow.log_param(
@@ -113,20 +126,17 @@ with mlflow.start_run():
 
 
     # ======================================
-    # Guardar modelo en MLflow
+    # Registrar modelo en MLflow Registry
     # ======================================
 
     mlflow.sklearn.log_model(
-    model,
-    "modelo",
-    registered_model_name="Diabetes_Model"
-)
+        sk_model=model,
+        artifact_path="modelo",
+        registered_model_name="Diabetes_Model",
+        input_example=X_train.iloc[:5]
+    )
 
-# ==========================================
-# Fin
-# ==========================================
 
 print("Entrenamiento terminado correctamente")
-
 
 
