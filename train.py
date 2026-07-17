@@ -53,7 +53,7 @@ with mlflow.start_run():
 
     # Crear modelo
     model = RandomForestClassifier(
-        n_estimators=100,
+        n_estimators=200,
         random_state=42
     )
 
@@ -117,10 +117,10 @@ with mlflow.start_run():
     # ======================================
 
     mlflow.sklearn.log_model(
-        sk_model=model,
-        artifact_path="modelo"
-    )
-
+    model,
+    "modelo",
+    registered_model_name="Diabetes_Model"
+)
 
 # ==========================================
 # Fin
