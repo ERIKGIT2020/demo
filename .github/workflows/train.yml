@@ -6,29 +6,25 @@ on:
       - main
 
 jobs:
+
   train:
+
     runs-on: ubuntu-latest
 
     steps:
-      # Descargar el código del repositorio
-      - name: Checkout code
-        uses: actions/checkout@v4
 
-      # Instalar Python
-      - name: Setup Python
-        uses: actions/setup-python@v5
-        with:
-          python-version: "3.11"
+    - name: Checkout code
+      uses: actions/checkout@v4
 
-      # Instalar las dependencias
-      - name: Install dependencies
-        run: |
-          python -m pip install --upgrade pip
-          pip install -r requirements.txt
+    - name: Setup Python
+      uses: actions/setup-python@v5
+      with:
+        python-version: "3.11"
 
-      # Permitir que MLflow use la carpeta mlruns
-      - name: Run training
-        env:
-          MLFLOW_ALLOW_FILE_STORE: "true"
-        run: |
-          python train.py
+    - name: Install dependencies
+      run: |
+        pip install -r requirements.txt
+
+    - name: Run training
+      run: |
+        python train.py

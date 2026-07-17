@@ -7,67 +7,104 @@ from sklearn.ensemble import RandomForestClassifier
 from sklearn.metrics import accuracy_score
 
 
-# ==========================
-# Leer datos
-# ==========================
+# ==========================================
+# Configuración de MLflow
+# ==========================================
+
+# Usar SQLite como backend (compatible con GitHub Actions)
+mlflow.set_tracking_uri("sqlite:///mlflow.db")
+
+# Crear o seleccionar experimento
+mlflow.set_experiment("Diabetes")
+
+
+# ==========================================
+# Cargar datos
+# ==========================================
+
 df = pd.read_csv("data/diabetes.csv")
 
 
-# Variables de entrada y salida
-X = df.drop(["PatientID", "Diabetic"], axis=1)
+# ==========================================
+# Separar variables
+# ==========================================
+
+X = df.drop("Diabetic", axis=1)
 y = df["Diabetic"]
 
 
-# Dividir datos
+# ==========================================
+# División entrenamiento / prueba
+# ==========================================
+
 X_train, X_test, y_train, y_test = train_test_split(
     X,
     y,
-    test_size=0.20,
+    test_size=0.2,
     random_state=42
 )
 
 
-# Crear modelo
-model = RandomForestClassifier(
-    random_state=42
-)
-
-
-# ==========================
-# MLflow Tracking
-# ==========================
+# ==========================================
+# Entrenamiento con MLflow
+# ==========================================
 
 with mlflow.start_run():
 
-    # Entrenamiento
-    model.fit(X_train, y_train)
+    # Crear modelo
+    model = RandomForestClassifier(
+        n_estimators=100,
+        random_state=42
+    )
+
+
+    # Entrenar
+    model.fit(
+        X_train,
+        y_train
+    )
 
 
     # Predicción
     y_pred = model.predict(X_test)
 
 
-    # Métrica
-    accuracy = accuracy_score(y_test, y_pred)
+    # Evaluación
+    accuracy = accuracy_score(
+        y_test,
+        y_pred
+    )
 
 
-    print("=" * 40)
-    print("Modelo entrenado correctamente")
-    print(f"Accuracy: {accuracy:.2%}")
-    print("=" * 40)
+    print("----------------------------")
+    print("Modelo entrenado")
+    print(f"Accuracy: {accuracy:.4f}")
+    print("----------------------------")
 
 
-    # Guardar información en MLflow
+    # ======================================
+    # Registrar parámetros
+    # ======================================
+
     mlflow.log_param(
         "Modelo",
-        "RandomForest"
+        "RandomForestClassifier"
     )
 
     mlflow.log_param(
         "n_estimators",
-        model.n_estimators
+        100
     )
 
+    mlflow.log_param(
+        "random_state",
+        42
+    )
+
+
+    # ======================================
+    # Registrar métrica
+    # ======================================
 
     mlflow.log_metric(
         "Accuracy",
@@ -75,11 +112,21 @@ with mlflow.start_run():
     )
 
 
+    # ======================================
     # Guardar modelo en MLflow
+    # ======================================
+
     mlflow.sklearn.log_model(
-        model,
-        "modelo"
+        sk_model=model,
+        artifact_path="modelo"
     )
 
 
-print("Proceso terminado")
+# ==========================================
+# Fin
+# ==========================================
+
+print("Entrenamiento terminado correctamente")
+
+
+
