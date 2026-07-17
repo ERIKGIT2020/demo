@@ -29,7 +29,7 @@ df = pd.read_csv("data/diabetes.csv")
 # Separar variables
 # ==========================================
 
-X = df.drop("Diabetic", axis=1)
+X = df.drop(["PatientID", "Diabetic"], axis=1)
 y = df["Diabetic"]
 
 
